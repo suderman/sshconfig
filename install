@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# 2014 Jon Suderman
+# https://github.com/suderman/sshconfig
+
+# Open a terminal and run this command:
+# curl sshconfig.suderman.io/install | sh
+
+# Ensure /usr/local/bin exists
+if [ ! -d "/usr/local" ]; then
+  sudo mkdir -p /usr/local/bin
+  ULB_OWNER=`whoami`:`ls -ld /usr | awk '{print $4}'`
+  sudo chown $ULB_OWNER /usr/{local,local/bin}
+fi
+
+# Download sshconfig into /usr/local/bin
+sudo curl https://raw.githubusercontent.com/suderman/sshconfig/master/sshconfig -o /usr/local/bin/sshconfig
+
+# Set permissions
+ULB_OWNER=`ls -ld /usr/local/bin | awk '{print $3}'`:`ls -ld /usr/local/bin | awk '{print $4}'`
+sudo chown $ULB_OWNER /usr/local/bin/sshconfig 
+sudo chmod +x /usr/local/bin/sshconfig
+
+echo "Installed sshconfig to /usr/local/bin"
+
