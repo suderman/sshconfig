@@ -4,13 +4,17 @@
 # https://github.com/suderman/sshconfig
 
 # Expand tilde just in case
-[ -z "$SSH_CONFIGS" ] && SSH_CONFIGS="~/.ssh"
+SSH_HOME="~/.ssh"
+eval SSH_HOME=$SSH_HOME
+
+# Expand tilde just in case
+[ -z "$SSH_CONFIGS" ] && SSH_CONFIGS="$SSH_HOME"
 eval SSH_CONFIGS=$SSH_CONFIGS
 
 # Where the .ssh/config is saved
 output="$HOME/.ssh/config"
 
-# Called three times
+# Main
 __sshconfig() {
 
   # Clear out ssh/config
@@ -79,6 +83,44 @@ __cp() {
     set -f && echo $line >> $output
   done
 }
+
+# May as well fix permissions while we're at it
+__sshpermissions() {
+  chmod 700 $SSH_HOME
+
+  # Set known_hosts to write by owner, read-only by all
+  f="$SSH_HOME/known_hosts"
+  [ -f "$f" ] && chmod 644 $f
+
+  # Set authorized_keys to read-write by owner
+  f="$SSH_HOME/authorized_keys"
+  [ -f "$f" ] && chmod 600 $f
+
+  # Set all private keys to read-only by owner
+  for f in $SSH_HOME/id_*; do
+    [ -f "$f" ] && chmod 400 $f
+  done
+  for f in $SSH_HOME/*_rsa; do
+    [ -f "$f" ] && chmod 400 $f
+  done
+  for f in $SSH_HOME/*_dsa; do
+    [ -f "$f" ] && chmod 400 $f
+  done
+  for f in $SSH_HOME/*.pem; do
+    [ -f "$f" ] && chmod 400 $f
+  done
+
+  # Set all public keys to read-only by all
+  for f in $SSH_HOME/*.pub; do
+    [ -f "$f" ] && chmod 444 $f
+  done
+
+  # Done!
+  echo "Verified permissions in $SSH_HOME"
+}
+
+# Verify permissions
+__sshpermissions
 
 # Run the config
 __sshconfig
