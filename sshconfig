@@ -106,6 +106,9 @@ __sshpermissions() {
   for f in $SSH_HOME/*_dsa; do
     [ -f "$f" ] && chmod 400 $f
   done
+  for f in $SSH_HOME/*.key; do
+    [ -f "$f" ] && chmod 400 $f
+  done  
   for f in $SSH_HOME/*.pem; do
     [ -f "$f" ] && chmod 400 $f
   done
