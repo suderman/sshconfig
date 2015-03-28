@@ -7,5 +7,5 @@ Install
 -------
 Open a terminal and run this command:  
 
-`curl sshconfig.suderman.io/install | sh`  
+`curl suderman.github.io/sshconfig/install | sh`  
 
